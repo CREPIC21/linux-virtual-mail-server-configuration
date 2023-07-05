@@ -289,7 +289,7 @@ mysql> CREATE TABLE forwardings (source varchar(80) NOT NULL, destination TEXT N
 mysql> exit
 ```
 - creating files that will be included in the main.cf, the Postfix configuration file, to tell Postfix how to connect to MySQL:
-A) ### this file indicate Postfix how to get the domains from the mysql database ###
+A) this file indicate Postfix how to get the domains from the mysql database 
 ```
 vim /etc/postfix/mysql_virtual_domains.cf
 ```
@@ -301,7 +301,7 @@ query = SELECT domain FROM domains WHERE domain='%s'
 hosts = 127.0.0.1
 ```
 
-B) ### this file will tell Postfix how to access the mail aliases which are in the forwarding table ###
+B) this file will tell Postfix how to access the mail aliases which are in the forwarding table 
 ```
 vim /etc/postfix/mysql_virtual_forwardings.cf
 ```
@@ -313,7 +313,7 @@ query = SELECT destination FROM forwardings WHERE source='%s'
 hosts = 127.0.0.1
 ```
 
-C) ### creating virtual mailbox configuration file for Postfix ###
+C) creating virtual mailbox configuration file for Postfix 
 ```
 vim /etc/postfix/mysql_virtual_mailboxes.cf
 ```
@@ -325,7 +325,7 @@ query = SELECT CONCAT(SUBSTRING_INDEX(email,'@',-1),'/',SUBSTRING_INDEX(email,'@
 hosts = 127.0.0.1
 ```
 
-D) ### creating virtual e-mail mapping file ###
+D) creating virtual e-mail mapping file
 ```
 vim /etc/postfix/mysql_virtual_email2email.cf
 ```
@@ -346,7 +346,7 @@ chown root.postfix /etc/postfix/mysql_virtual_*
 groupadd -g 5000 vmail
 useradd -g vmail -u 5000 -d /var/vmail -m vmail
 ```
-## **10. Configuring Postfix**
+## **11. Configuring Postfix**
 ```
 postconf -e "myhostname = mail.wordpresslinux.xyz"
 postconf -e "mydestination = mail.wordpresslinux.xyz, localhost, localhost.localdomain"
@@ -371,7 +371,7 @@ postconf -e 'proxy_read_maps = $local_recipient_maps $mydestination $virtual_ali
 ```
 - postfix configuration parameters: https://www.postfix.org/postconf.5.html
 
-## **11. Configuring SMTP AUTH (SASLAUTHD with PAM and MySql)**
+## **12. Configuring SMTP AUTH (SASLAUTHD with PAM and MySql)**
 A) Creating a directory where saslauthd will save its information:  
 ```
 mkdir -p /var/spool/postfix/var/run/saslauthd
@@ -428,7 +428,7 @@ systemctl restart saslauthd
 ```
 - SASL reference: https://www.rfc-editor.org/rfc/rfc4422
 
-## **12. Configuring Dovecot (POP3/IMAP)**
+## **13. Configuring Dovecot (POP3/IMAP)**
 A) At the end of `/etc/postfix/master.cf` add:
 ```
 dovecot   unix  -       n       n       -       -       pipe
@@ -519,7 +519,7 @@ D) Restart Dovecot
 systemctl restart dovecot
 ```
 
-## **13. Adding Domains and Virtual Users, Testing The System**
+## **14. Adding Domains and Virtual Users, Testing The System**
 ```
 mysql -u root
 msyql>USE mail;
@@ -594,7 +594,7 @@ smtps     inet  n       -       y       -       -       smtpd
 ```
 systemctl restart postfix
 ```
-## **14. Virus Scanning Using Amavis and ClamAV**
+## **15. Virus Scanning Using Amavis and ClamAV**
 1. Installing Amavis
 ```
 apt update && apt install amavisd-new
@@ -683,7 +683,7 @@ journalctl -eu amavis
 - download test virus and send it to via email to check if antivirus detection is working
   - https://www.eicar.org/download-anti-malware-testfile/
 
-## **15. Fighting Against Spam: Postfix Access Restrictions**
+## **16. Fighting Against Spam: Postfix Access Restrictions**
 - http://www.postfix.org/postconf.5.html
 
 1. Fighting Against Spam: Postfix HELO Restrictions
@@ -762,7 +762,7 @@ postmap /etc/postfix/rbl_override
 systemctl restart postfix
 ```
 
-## **16. Installing RSPAMD and POSTFIX integration**
+## **17. Installing RSPAMD and POSTFIX integration**
 # All commands are run as root 
 
 1. Installing Redis as storage for non-volatile data and as a cache for volatile data
@@ -847,7 +847,7 @@ cat /etc/rspamd/actions.conf
 ```
 - send a test email to your user from gmail which will be rejected
 
-## **17. Postfix Log Monitoring Using pflogsumm**
+## **18. Postfix Log Monitoring Using pflogsumm**
 ```
 apt install pflogsumm
 ```
