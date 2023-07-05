@@ -289,6 +289,7 @@ mysql> CREATE TABLE forwardings (source varchar(80) NOT NULL, destination TEXT N
 mysql> exit
 ```
 - creating files that will be included in the main.cf, the Postfix configuration file, to tell Postfix how to connect to MySQL:
+
 A) this file indicate Postfix how to get the domains from the mysql database 
 ```
 vim /etc/postfix/mysql_virtual_domains.cf
