@@ -596,24 +596,24 @@ smtps     inet  n       -       y       -       -       smtpd
 systemctl restart postfix
 ```
 ## **15. Virus Scanning Using Amavis and ClamAV**
-1. Installing Amavis
+A) Installing Amavis
 ```
 apt update && apt install amavisd-new
 ```
 **Note: if there's an error set `$myhostname` in `/etc/amavis/conf.d/05-node_id`**
 
-2. Installing required packages for scanning attachments
+B) Installing required packages for scanning attachments
 ```
 apt install arj bzip2 cabextract cpio rpm2cpio file gzip lhasa nomarch pax rar unrar p7zip-full unzip zip lrzip lzip liblz4-tool lzop unrar-free
 ```
 
-3. Configuring Postfix (`/etc/postfix/main.cf`)
+C) Configuring Postfix (`/etc/postfix/main.cf`)
 ```
 postconf -e 'content_filter = smtp-amavis:[127.0.0.1]:10024'
 postconf -e 'smtpd_proxy_options = speed_adjust'
 ```
 
-4. Add to the end of `/etc/postfix/master.cf`:
+D) Add to the end of `/etc/postfix/master.cf`:
 ```
 smtp-amavis   unix   -   -   n   -   2   smtp
     -o syslog_name=postfix/amavis
@@ -649,12 +649,12 @@ smtp-amavis   unix   -   -   n   -   2   smtp
     -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks,no_address_mappings
 ```
 
-5. Installing ClamAV
+E) Installing ClamAV
 ```
 apt install clamav clamav-daemon
 ```
 
-6. Turning on virus-checking in Amavis.
+F) Turning on virus-checking in Amavis.
 - in `/etc/amavis/conf.d/15-content_filter_mode` uncomment:
 ```
 @bypass_virus_checks_maps = (
@@ -665,18 +665,18 @@ apt install clamav clamav-daemon
 usermod -aG amavis clamav
 ```
 
-7. Restarting Amavis and ClamAv
+G) Restarting Amavis and ClamAv
 ```
 systemctl restart amavis
 systemctl restart clamav-daemon
 ```
 
-8. To check that Amavis communicates with ClamAV run:
+H) To check that Amavis communicates with ClamAV run:
 ```
 journalctl -eu amavis
 ```
 
-9. Testing Amavis and ClamAV
+I) Testing Amavis and ClamAV
 ```
 tail -f /var/log/mail.log
 journalctl -eu amavis
@@ -687,7 +687,7 @@ journalctl -eu amavis
 ## **16. Fighting Against Spam: Postfix Access Restrictions**
 - http://www.postfix.org/postconf.5.html
 
-1. Fighting Against Spam: Postfix HELO Restrictions
+A) Fighting Against Spam: Postfix HELO Restrictions
 ```
 vim /etc/postfix/main.cf
 ```
@@ -701,7 +701,7 @@ smtpd_helo_restrictions =
  reject_unknown_helo_hostname,
  permit
 ```
-2. Fighting Against Spam: Postfix Sender Restrictions
+B) Fighting Against Spam: Postfix Sender Restrictions
 ```
 vim /etc/postfix/main.cf
 ```
@@ -715,7 +715,7 @@ smtpd_sender_restrictions =
  reject_unknown_client_hostname,
  permit
 ```
-3. Fighting Against Spam: Postfix Recipient Restrictions
+C) Fighting Against Spam: Postfix Recipient Restrictions
 ```
 vim /etc/postfix/main.cf
 ```
@@ -729,7 +729,7 @@ smtpd_recipient_restrictions =
  reject_non_fqdn_recipient,
  permit
 ```
-4. Fighting Against Spam: Using Public RBLs
+D) Fighting Against Spam: Using Public RBLs
 - https://www.debouncer.com/
 ```
 vim /etc/postfix/main.cf
@@ -766,22 +766,22 @@ systemctl restart postfix
 ## **17. Installing RSPAMD and POSTFIX integration**
 # All commands are run as root 
 
-1. Installing Redis as storage for non-volatile data and as a cache for volatile data
+A) Installing Redis as storage for non-volatile data and as a cache for volatile data
 ```
 apt update && apt install redis-server
 ```
 
-2. Adding the repository GPG key 
+B) Adding the repository GPG key 
 ```
 wget -O- https://rspamd.com/apt-stable/gpg.key | sudo apt-key add -
 ```
 
-3. Enabling the Rspamd repository
+C) Enabling the Rspamd repository
 ```
 echo "deb http://rspamd.com/apt-stable/ $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/rspamd.list
 ```
 
-4. Installing Rspamd
+D) Installing Rspamd
 ```
 apt update && apt install rspamd
 ```
@@ -790,14 +790,14 @@ apt update && apt install rspamd
 pgrep -a rspamd
 ```
 
-5. Configuring the Rspamd normal worker to listen only on localhost interface
+E) Configuring the Rspamd normal worker to listen only on localhost interface
 ```
 vim /etc/rspamd/local.d/worker-normal.inc
 ```
 ```
 bind_socket = "127.0.0.1:11333";
 ```
-6. Enabling the milter protocol to communicate with postfix:
+F) Enabling the milter protocol to communicate with postfix:
 ```
 vim /etc/rspamd/local.d/worker-proxy.inc
 ```
@@ -811,7 +811,7 @@ vim /etc/rspamd/local.d/worker-proxy.inc
     }
 ```
 
-7. Configure postfix to use Rspamd
+G) Configure postfix to use Rspamd
 - https://rspamd.com/doc/quickstart.html
 ```
 postconf -e "milter_protocol = 6"
@@ -821,13 +821,13 @@ postconf -e "smtpd_milters = inet:127.0.0.1:11332"
 postconf -e "non_smtpd_milters = inet:127.0.0.1:11332"
 ```
 
-8. Restarting Rspamd and Postfix
+H) Restarting Rspamd and Postfix
 ```
 systemctl restart rspamd
 systemctl restart postfix
 ```
 
-9. Configuring and Testing Rspamd
+I) Configuring and Testing Rspamd
 - create a new file with points that will be awarded to email attributes, such as `SUBJECT_HAS_CURRENCY` attribute:
 ```
 vim /etc/rspamd/local.d/groups.conf
