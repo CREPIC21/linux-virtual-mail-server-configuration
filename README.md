@@ -764,7 +764,7 @@ systemctl restart postfix
 ```
 
 ## **17. Installing RSPAMD and POSTFIX integration**
-# All commands are run as root 
+### All commands are run as root 
 
 A) Installing Redis as storage for non-volatile data and as a cache for volatile data
 ```
