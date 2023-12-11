@@ -1,7 +1,7 @@
 # Linux Virtual mail Server Configuration
  - VM, SSH, Domain Name, DNS, VPS, WEB, OpenSSH, MySql, Postfix, SMTP AUTH, Dovecot (POP3/IMAP), Amavis, ClamAV, Redis, Rspamd, Pflogsumm 
 
-> :mega: In the configuration steps replace all occurrences of:
+💡 In the configuration steps replace all occurrences of:
 > - `wordpresslinux.xyz` with your chosen domain name
 > - `wordpress` with your own chosen word
 > - `vm_ip_address` with your VM IP address
